@@ -59,8 +59,8 @@ void pre_auton(void) {
 /*                                                                           */
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
-
-
+/*      Whan that april with its showers sota the drought of march hath perces to to rota and bathed every veyne in swich liquour of which zephrus eek with his swete brethe           */
+//Bakers a little hoe I love that about him oop
 // AUTONOMOUS PHASE
 // AUTONOMOUS PHASE
 void roboMovement(int velocity, int degree, double wait /* seconds */ ) {
@@ -75,7 +75,11 @@ void roboMovement(int velocity, int degree, double wait /* seconds */ ) {
   vex::task::sleep(wait * 1000);
 }
 // Check if can turn both ways or only 1 each function
-void turning(int degree, double wait) {
+void turnRobot(int velocity, int degree, double wait) {
+  frontleft.setVelocity(velocity, percent);
+  backleft.setVelocity(velocity, percent);
+  frontright.setVelocity(velocity, percent);
+  backright.setVelocity(velocity, percent);
   frontleft.startRotateFor(vex::directionType::rev, degree, vex::rotationUnits::deg);
   backleft.startRotateFor(vex::directionType::rev, degree, vex::rotationUnits::deg);
   frontright.startRotateFor(vex::directionType::fwd, degree, vex::rotationUnits::deg);
@@ -83,14 +87,14 @@ void turning(int degree, double wait) {
   vex::task::sleep(wait * 1000);
 }
 
-void armmove(int velocity, int dist, double wait) {
+void armMove(int velocity, int dist, double wait) {
   armleft.setVelocity(velocity, percent);
   armright.setVelocity(velocity, percent);
   armleft.startRotateFor(vex::directionType::fwd, dist, vex::rotationUnits::deg);
   armright.rotateFor(vex::directionType::fwd, dist, vex::rotationUnits::deg);
 }
 
-void moveBackLift(int velocity, int dist, double wait) {
+void adjustBackLift(int velocity, int dist, double wait) {
   backlift.setVelocity(velocity, percent);
   backlift.rotateFor(vex::directionType::fwd, dist, vex::rotationUnits::deg);
 }
@@ -103,14 +107,15 @@ void pneumaticAutonDown() {
   dig1.set(false);
 }
 
+double automFoot = 325.55;
+
 void autonomous(void) {
   // Practice 750deg fwd, 90degleftturn, 500deg rev
-  moveBackLift(30, 110, 0.5);
-  turning(30, 0.5);
-  roboMovement(30, 750, 0.5);
-  moveBackLift(30, -110, 0.5);
-  turning(30, 3);
-  roboMovement(30, -500, 0.5);
+  adjustBackLift(100, 1300, 0.2);
+  roboMovement(60, automFoot * 2 * -1, 0.2);
+  adjustBackLift(30, -900, 0.2);
+  roboMovement(80, automFoot * 2, 0.2);
+  turnRobot(30, 500, 0);
 }
 
 // USER CONTROL PHASE 
@@ -213,3 +218,10 @@ int main() {
     wait(100, msec);
   }
 }
+
+
+
+
+
+
+// Yoooooooooooooooooooo
