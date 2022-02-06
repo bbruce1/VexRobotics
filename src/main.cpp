@@ -83,14 +83,14 @@ void turning(int degree, double wait) {
   vex::task::sleep(wait * 1000);
 }
 
-void armmove(int velocity, int dist, int wait) {
+void armmove(int velocity, int dist, double wait) {
   armleft.setVelocity(velocity, percent);
   armright.setVelocity(velocity, percent);
   armleft.startRotateFor(vex::directionType::fwd, dist, vex::rotationUnits::deg);
   armright.rotateFor(vex::directionType::fwd, dist, vex::rotationUnits::deg);
 }
 
-void backliftmove(int velocity, int dist, int wait) {
+void moveBackLift(int velocity, int dist, double wait) {
   backlift.setVelocity(velocity, percent);
   backlift.rotateFor(vex::directionType::fwd, dist, vex::rotationUnits::deg);
 }
@@ -105,10 +105,12 @@ void pneumaticAutonDown() {
 
 void autonomous(void) {
   // Practice 750deg fwd, 90degleftturn, 500deg rev
-  roboMovement(30, 750, 3);
-  turning(90, 3);
-  roboMovement(30, -500, 3);
-
+  moveBackLift(30, 110, 0.5);
+  turning(30, 0.5);
+  roboMovement(30, 750, 0.5);
+  moveBackLift(30, -110, 0.5);
+  turning(30, 3);
+  roboMovement(30, -500, 0.5);
 }
 
 // USER CONTROL PHASE 
@@ -138,14 +140,11 @@ void backLiftingLol(int setarmspeed) {
 }
 
 
-  
-
-
 void usercontrol(void) {
   // Variable Setting
   int armspeed = 60; 
   dig1.set(false);
-  bool gamemode = false;
+  bool isFast = false;
   // Infinite Loop for doing robot stuff
   while (1) {
     // Pneumatics
@@ -183,12 +182,12 @@ void usercontrol(void) {
     }
     // Changing Armlift Speed
     if (Controller1.ButtonB.pressing()) {
-      if (gamemode == false) {
+      if (isFast == false) {
         armspeed = 100;
-        gamemode = true;
+        isFast = true;
       } else {
         armspeed = 60;
-        gamemode = false;
+        isFast = false;
       }
     }
     wait(20, msec);  
