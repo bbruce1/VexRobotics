@@ -45,8 +45,7 @@ using code = vision::code;
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
-  Controller1.Screen.print("Starting!");
-  // All activities that occur before the competition starts
+    // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
 }
 
@@ -99,23 +98,61 @@ void adjustBackLift(int velocity, int dist, double wait) {
   backlift.rotateFor(vex::directionType::fwd, dist, vex::rotationUnits::deg);
 }
 
-void pneumaticAutonUp() {
-  dig1.set(true);
+void moveAndBackDown(int velocityBackLift, int velocityMove, int distMove, int distMoveBackLift, double wait) {
+    // Back lift
+    backlift.setVelocity(velocityBackLift, percent);
+    backlift.startRotateFor(vex::directionType::fwd, distMoveBackLift, vex::rotationUnits::deg);
+
+    // Movement
+    frontleft.setVelocity(velocityMove, percent);
+    backleft.setVelocity(velocityMove, percent);
+    frontright.setVelocity(velocityMove, percent);
+    backright.setVelocity(velocityMove, percent);
+    frontleft.startRotateFor(vex::directionType::fwd, distMove, vex::rotationUnits::deg);
+    backleft.startRotateFor(vex::directionType::fwd, distMove, vex::rotationUnits::deg);
+    frontright.startRotateFor(vex::directionType::fwd, distMove, vex::rotationUnits::deg);
+    backright.rotateFor(vex::directionType::fwd, distMove, vex::rotationUnits::deg);
+    vex::task::sleep(wait * 1500);
 }
+
+void putUpAndMoveBack(int velocityBackLift, int velocityMove, int distMove, int distMoveBackLift, double wait) {
+    // Back lift
+    backlift.setVelocity(velocityBackLift, percent);
+    backlift.startRotateFor(vex::directionType::fwd, distMoveBackLift, vex::rotationUnits::deg);
+    vex::task::sleep(1000);
+
+
+    // Movement
+    frontleft.setVelocity(velocityMove, percent);
+    backleft.setVelocity(velocityMove, percent);
+    frontright.setVelocity(velocityMove, percent);
+    backright.setVelocity(velocityMove, percent);
+    frontleft.startRotateFor(vex::directionType::fwd, distMove, vex::rotationUnits::deg);
+    backleft.startRotateFor(vex::directionType::fwd, distMove, vex::rotationUnits::deg);
+    frontright.startRotateFor(vex::directionType::fwd, distMove, vex::rotationUnits::deg);
+    backright.rotateFor(vex::directionType::fwd, distMove, vex::rotationUnits::deg);
+    vex::task::sleep(wait * 1000);
+} 
 
 void pneumaticAutonDown() {
   dig1.set(false);
+  vex::task::sleep(1000);
+}
+
+void pneumaticAutonUp() {
+  dig1.set(true);
+  vex::task::sleep(1000);
 }
 
 double automFoot = 325.55;
 
 void autonomous(void) {
   // Practice 750deg fwd, 90degleftturn, 500deg rev
-  adjustBackLift(100, 1300, 0.2);
-  roboMovement(60, automFoot * 2 * -1, 0.2);
-  adjustBackLift(30, -900, 0.2);
-  roboMovement(80, automFoot * 2, 0.2);
-  turnRobot(30, 500, 0);
+  pneumaticAutonUp();
+  roboMovement(100, automFoot * 3.5, 0.0);
+  roboMovement(30, automFoot * 2.5, 0.2);
+  pneumaticAutonDown();
+  roboMovement(100, automFoot * 4.5 * -1, 0.2);
 }
 
 // USER CONTROL PHASE 
@@ -148,7 +185,7 @@ void backLiftingLol(int setarmspeed) {
 void usercontrol(void) {
   // Variable Setting
   int armspeed = 60; 
-  dig1.set(false);
+  dig1.set(true);
   bool isFast = false;
   // Infinite Loop for doing robot stuff
   while (1) {
@@ -168,10 +205,18 @@ void usercontrol(void) {
       frontright.spin(vex::directionType::fwd, Controller1.Axis2.position(), vex::velocityUnits::pct);
       backright.spin(vex::directionType::fwd, Controller1.Axis2.position(), vex::velocityUnits::pct);
     // Backlift
+    // Changing Armlift Speed
+    if (Controller1.ButtonB.pressing()) {
+      if (isFast == false) {
+        armspeed = 100;
+        isFast = true;
+      } else {
+        armspeed = 60;
+        isFast = false;
+      }
+    }
     backLiftingLol(100);
     // Armlift
-    
-
     if (Controller1.ButtonR2.pressing()) {
       armleft.spin(vex::directionType::fwd, armspeed, vex::velocityUnits::pct);
       armright.spin(vex::directionType::fwd, armspeed, vex::velocityUnits::pct);
@@ -184,16 +229,6 @@ void usercontrol(void) {
     } else {
       Brain.Screen.print("What the Thaddues is going on");
       break;
-    }
-    // Changing Armlift Speed
-    if (Controller1.ButtonB.pressing()) {
-      if (isFast == false) {
-        armspeed = 100;
-        isFast = true;
-      } else {
-        armspeed = 60;
-        isFast = false;
-      }
     }
     wait(20, msec);  
   }
