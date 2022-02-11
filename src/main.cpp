@@ -149,8 +149,8 @@ double automFoot = 325.55;
 void autonomous(void) {
   // Practice 750deg fwd, 90degleftturn, 500deg rev
   pneumaticAutonUp();
-  roboMovement(100, automFoot * 3.5, 0.0);
-  roboMovement(30, automFoot * 2.5, 0.2);
+  roboMovement(100, automFoot * 4.5, 0.0);
+  roboMovement(30, automFoot * 1.5, 0.2);
   pneumaticAutonDown();
   roboMovement(100, automFoot * 4.5 * -1, 0.2);
 }
@@ -198,12 +198,17 @@ void usercontrol(void) {
       dig1.set(false);
       wait(100, msec);
     }
-    
+    float leftMotorDriveSpeed = Controller1.Axis3.position() + Controller1.Axis1.position() * 0.3;
+    float rightMotorDriveSpeed = Controller1.Axis3.position() - Controller1.Axis1.position() * 0.3;
     // Movement
-      frontleft.spin(vex::directionType::fwd, Controller1.Axis3.position(), vex::velocityUnits::pct);
-      backleft.spin(vex::directionType::fwd, Controller1.Axis3.position(), vex::velocityUnits::pct);
-      frontright.spin(vex::directionType::fwd, Controller1.Axis2.position(), vex::velocityUnits::pct);
-      backright.spin(vex::directionType::fwd, Controller1.Axis2.position(), vex::velocityUnits::pct);
+      frontleft.spin(vex::directionType::fwd, leftMotorDriveSpeed, vex::velocityUnits::pct);
+      backleft.spin(vex::directionType::fwd, leftMotorDriveSpeed, vex::velocityUnits::pct);
+      frontright.spin(vex::directionType::fwd, rightMotorDriveSpeed, vex::velocityUnits::pct);
+      backright.spin(vex::directionType::fwd, rightMotorDriveSpeed, vex::velocityUnits::pct);
+      // frontleft.spin(vex::directionType::fwd, Controller1.Axis3.position(), vex::velocityUnits::pct);
+      // backleft.spin(vex::directionType::fwd, Controller1.Axis3.position(), vex::velocityUnits::pct);
+      // frontright.spin(vex::directionType::fwd, Controller1.Axis2.position(), vex::velocityUnits::pct);
+      // backright.spin(vex::directionType::fwd, Controller1.Axis2.position(), vex::velocityUnits::pct);
     // Backlift
     // Changing Armlift Speed
     if (Controller1.ButtonB.pressing()) {
@@ -215,7 +220,7 @@ void usercontrol(void) {
         isFast = false;
       }
     }
-    backLiftingLol(100);
+    backLiftingLol(armspeed);
     // Armlift
     if (Controller1.ButtonR2.pressing()) {
       armleft.spin(vex::directionType::fwd, armspeed, vex::velocityUnits::pct);
