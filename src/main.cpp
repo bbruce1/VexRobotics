@@ -135,25 +135,44 @@ void putUpAndMoveBack(int velocityBackLift, int velocityMove, int distMove, int 
 } 
 
 void pneumaticAutonDown() {
-  dig1.set(false);
-  vex::task::sleep(1000);
+  dig1.pneumatics::set(true);	
+  vex::task::sleep(400);
 }
 
 void pneumaticAutonUp() {
-  dig1.set(true);
-  vex::task::sleep(1000);
+  dig1.pneumatics::set(false);	
 }
 
 double automFoot = 325.55;
 
+
 void autonomous(void) {
   // Practice 750deg fwd, 90degleftturn, 500deg rev
   pneumaticAutonUp();
-  roboMovement(100, automFoot * 4.5, 0.0);
-  roboMovement(30, automFoot * 1.5, 0.2);
+  roboMovement(100, automFoot * 3.8, 0.0);
+  roboMovement(30, automFoot * 0.8, 0.1);
   pneumaticAutonDown();
-  roboMovement(100, automFoot * 4.5 * -1, 0.2);
+  roboMovement(100, automFoot * 3.0 * -1, 0.2);
 }
+
+
+/*
+void autonomous(void) {
+  // Practice 750deg fwd, 90degleftturn, 500deg rev
+  pneumaticAutonUp();
+  roboMovement(100, automFoot * 3.8, 0.0);
+  roboMovement(30, automFoot * 0.5, 0.1);
+  pneumaticAutonDown();
+  roboMovement(100, automFoot * 3.0 * -1, 0.2);
+  pneumaticAutonUp();
+  roboMovement(50, automFoot * -1.0, 0.2);
+  turnRobot(100, 405, 0.2);
+  adjustBackLift(100, -1200, 0.1);
+  roboMovement(60, automFoot * -1.5, 0.2);
+  adjustBackLift(50, 1000, 0.1);
+  turnRobot(60, 700, 0.1);
+}
+*/
 
 // USER CONTROL PHASE 
 // USER CONTROL PHASE
@@ -171,9 +190,9 @@ void autonomous(void) {
 
 void backLiftingLol(int setarmspeed) {
   if (Controller1.ButtonL1.pressing()) {
-    backlift.spin(vex::directionType::fwd, setarmspeed, vex::velocityUnits::pct);
+    backlift.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
   } else if (Controller1.ButtonL2.pressing()) {
-    backlift.spin(vex::directionType::rev, setarmspeed, vex::velocityUnits::pct);
+    backlift.spin(vex::directionType::rev, 100, vex::velocityUnits::pct);
   } else if (!Controller1.ButtonL1.pressing() && !Controller1.ButtonL2.pressing()) {
     backlift.stop(vex::brakeType::hold);
   } else {
@@ -187,28 +206,35 @@ void usercontrol(void) {
   int armspeed = 60; 
   dig1.set(true);
   bool isFast = false;
+  bool isPneumaticUp = true;
   // Infinite Loop for doing robot stuff
   while (1) {
     // Pneumatics
-    if (Controller1.ButtonA.pressing()) {    
-        dig1.set(true);
-        wait(100, msec);
+    if (Controller1.ButtonA.pressing()) {
+      if (isPneumaticUp == true) {
+        dig1.pneumatics::set(false);
+        isPneumaticUp = false;
+      } else {
+        dig1.pneumatics::set(true);
+        isPneumaticUp = true;
+      } 
+      wait(250, msec);
     }
-    if (Controller1.ButtonY.pressing()) {
-      dig1.set(false);
-      wait(100, msec);
-    }
-    float leftMotorDriveSpeed = Controller1.Axis3.position() + Controller1.Axis1.position() * 0.3;
-    float rightMotorDriveSpeed = Controller1.Axis3.position() - Controller1.Axis1.position() * 0.3;
+    // if (Controller1.ButtonA.pressing()) {    
+    //     dig1.pneumatics::set(true);	
+    //     wait(100, msec);
+    // }
+    // if (Controller1.ButtonY.pressing()) {
+    //   dig1.pneumatics::set(false);	
+    //   wait(100, msec);
+    // }
+   // float leftMotorDriveSpeed = Controller1.Axis3.position() + Controller1.Axis1.position();
+    // float rightMotorDriveSpeed = Controller1.Axis3.position() - Controller1.Axis1.position();
     // Movement
-      frontleft.spin(vex::directionType::fwd, leftMotorDriveSpeed, vex::velocityUnits::pct);
-      backleft.spin(vex::directionType::fwd, leftMotorDriveSpeed, vex::velocityUnits::pct);
-      frontright.spin(vex::directionType::fwd, rightMotorDriveSpeed, vex::velocityUnits::pct);
-      backright.spin(vex::directionType::fwd, rightMotorDriveSpeed, vex::velocityUnits::pct);
-      // frontleft.spin(vex::directionType::fwd, Controller1.Axis3.position(), vex::velocityUnits::pct);
-      // backleft.spin(vex::directionType::fwd, Controller1.Axis3.position(), vex::velocityUnits::pct);
-      // frontright.spin(vex::directionType::fwd, Controller1.Axis2.position(), vex::velocityUnits::pct);
-      // backright.spin(vex::directionType::fwd, Controller1.Axis2.position(), vex::velocityUnits::pct);
+      frontleft.spin(vex::directionType::fwd, Controller1.Axis3.position(), vex::velocityUnits::pct);
+      backleft.spin(vex::directionType::fwd, Controller1.Axis3.position(), vex::velocityUnits::pct);
+      frontright.spin(vex::directionType::fwd, Controller1.Axis2.position(), vex::velocityUnits::pct);
+      backright.spin(vex::directionType::fwd, Controller1.Axis2.position(), vex::velocityUnits::pct);
     // Backlift
     // Changing Armlift Speed
     if (Controller1.ButtonB.pressing()) {

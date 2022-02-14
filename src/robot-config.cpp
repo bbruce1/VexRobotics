@@ -8,12 +8,12 @@ using code = vision::code;
 brain  Brain;
 
 // VEXcode device constructors
-motor armright = motor(PORT1, ratio18_1, false);
+motor armright = motor(PORT1, ratio18_1, true);
 motor backleft = motor(PORT2, ratio18_1, false);
 motor frontright = motor(PORT3, ratio18_1, true);
 motor backright = motor(PORT4, ratio18_1, true);
-motor backlift = motor(PORT7, ratio18_1, false);
-motor armleft = motor(PORT8, ratio18_1, true);
+motor backlift = motor(PORT7, ratio18_1, true);
+motor armleft = motor(PORT8, ratio18_1, false);
 motor frontleft = motor(PORT9, ratio18_1, false);
 controller Controller1 = controller(primary);
 digital_out dig1 = digital_out(Brain.ThreeWirePort.B);
